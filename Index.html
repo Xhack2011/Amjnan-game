@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Play the Copilot AI Quiz Game! Test your knowledge on science, history, and more. Challenge yourself and share your scores!">
+  <meta name="keywords" content="quiz, game, copilot, ai, trivia, educational">
+  <meta property="og:title" content="Copilot AI Quiz Game">
+  <meta property="og:description" content="Test your knowledge with our interactive quiz game!">
+  <meta property="og:type" content="website">
+  <title>Copilot AI Quiz Game - Test Your Knowledge!</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+      color: #e6edf3;
+      text-align: center;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .header {
+      margin-bottom: 30px;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #58a6ff, #79c0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .tagline {
+      font-size: 1.1em;
+      color: #8b949e;
+      margin-bottom: 20px;
+    }
+    #game-box {
+      background: linear-gradient(135deg, #161b22, #0d1117);
+      padding: 40px;
+      border-radius: 15px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      border: 1px solid #30363d;
+    }
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .stat-box {
+      background: #0d1117;
+      padding: 15px 25px;
+      border-radius: 10px;
+      border: 1px solid #30363d;
+      flex: 1;
+      min-width: 120px;
+    }
+    .stat-label {
+      font-size: 0.9em;
+      color: #8b949e;
+      margin-bottom: 5px;
+    }
+    .stat-value {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #58a6ff;
+    }
+    #question {
+      font-size: 1.5em;
+      margin-bottom: 25px;
+      color: #e6edf3;
+      line-height: 1.4;
+    }
+    #options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    button {
+      background: #238636;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      margin: 8px auto;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      max-width: 300px;
+    }
+    button:hover {
+      background: #2ea043;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(46, 160, 67, 0.3);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .btn-secondary {
+      background: #1f6feb;
+    }
+    .btn-secondary:hover {
+      background: #388bfd;
+    }
+    .btn-danger {
+      background: #da3633;
+    }
+    .btn-danger:hover {
+      background: #f85149;
+    }
+    #feedback {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 1.1em;
+      min-height: 30px;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .leaderboard-section {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #30363d;
+    }
+    .leaderboard-title {
+      font-size: 1.3em;
+      margin-bottom: 15px;
+      color: #58a6ff;
+    }
+    .leaderboard-item {
+      background: #0d1117;
+      padding: 10px 15px;
+      margin: 8px 0;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #30363d;
+    }
+    .leaderboard-rank {
+      font-weight: bold;
+      color: #58a6ff;
+      min-width: 30px;
+    }
+    .leaderboard-score {
+      font-weight: bold;
+      color: #79c0ff;
+    }
+    .share-section {
+      margin-top: 25px;
+      padding: 20px;
+      background: #0d1117;
+      border-radius: 10px;
+      border: 1px solid #30363d;
+    }
+    .share-title {
+      font-size: 1.1em;
+      margin-bottom: 15px;
+      color: #58a6ff;
+    }
+    .share-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .share-btn {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: white;
+    }
+    .share-twitter {
+      background: #1da1f2;
+    }
+    .share-twitter:hover {
+      background: #1a91da;
+      transform: scale(1.1);
+    }
+    .share-facebook {
+      background: #1877f2;
+    }
+    .share-facebook:hover {
+      background: #0a66c2;
+      transform: scale(1.1);
+    }
+    .share-whatsapp {
+      background: #25d366;
+    }
+    .share-whatsapp:hover {
+      background: #1ebd5a;
+      transform: scale(1.1);
+    }
+    .copy-link {
+      background: #238636;
+      border: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .copy-link:hover {
+      background: #2ea043;
+    }
+    .game-over {
+      background: #0d1117;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      border: 1px solid #30363d;
+    }
+    .trophy {
+      font-size: 3em;
+      margin: 10px 0;
+    }
+    footer {
+      margin-top: 40px;
+      color: #8b949e;
+      font-size: 0.9em;
+    }
+    footer a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎮 Copilot AI Quiz Game</h1>
+    <p class="tagline">Test your knowledge and compete with friends!</p>
+  </div>
+  <div id="game-box">
+    <div class="stats-container">
+      <div class="stat-box">
+        <div class="stat-label">Current Score</div>
+        <div class="stat-value" id="score-display">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Questions</div>
+        <div class="stat-value" id="question-count">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Best Score</div>
+        <div class="stat-value" id="best-score">0</div>
+      </div>
+    </div>
+    <p id="question">Press Start to begin!</p>
+    <div id="options"></div>
+    <div class="button-group">
+      <button onclick="startGame()" id="start-btn">Start Game</button>
+      <button class="btn-secondary" onclick="resetStats()" id="reset-btn">Reset Stats</button>
+    </div>
+    <p id="feedback"></p>
+    <!-- Leaderboard Section -->
+    <div class="leaderboard-section" id="leaderboard-section" style="display: none;">
+      <div class="leaderboard-title">🏆 Top Scores</div>
+      <div id="leaderboard"></div>
+    </div>
+    <!-- Share Section -->
+    <div class="share-section" id="share-section" style="display: none;">
+      <div class="share-title">📢 Share Your Score!</div>
+      <p id="share-message" style="margin-bottom: 15px;"></p>
+      <div class="share-buttons">
+        <a id="twitter-share" class="share-btn share-twitter" target="_blank" title="Share on Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a id="facebook-share" class="share-btn share-facebook" target="_blank" title="Share on Facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a id="whatsapp-share" class="share-btn share-whatsapp" target="_blank" title="Share on WhatsApp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+        <button class="copy-link" onclick="copyLink()">📋 Copy Link</button>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <p>Made with ❤️ | <a href="https://github.com/Xhack2011/Amjnan-game">View on GitHub</a></p>
+  </footer>
+  <script>
+    // Question bank (expandable to 200+)
+    const questions = [
+      { q: "What is 5 + 7?", options: ["10", "12", "15"], answer: "12" },
+      { q: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter"], answer: "Mars" },
+      { q: "Who developed Copilot AI?", options: ["Google", "Microsoft", "Apple"], answer: "Microsoft" },
+      { q: "What language is used for web structure?", options: ["HTML", "Python", "C++"], answer: "HTML" },
+      { q: "Which ocean is the largest?", options: ["Atlantic", "Pacific", "Indian"], answer: "Pacific" },
+      { q: "What is the capital of Japan?", options: ["Tokyo", "Beijing", "Seoul"], answer: "Tokyo" },
+      { q: "Which gas do plants absorb?", options: ["Oxygen", "Carbon Dioxide", "Nitrogen"], answer: "Carbon Dioxide" },
+      { q: "Who painted the Mona Lisa?", options: ["Van Gogh", "Leonardo da Vinci", "Picasso"], answer: "Leonardo da Vinci" },
+      { q: "Which is the fastest land animal?", options: ["Cheetah", "Horse", "Lion"], answer: "Cheetah" },
+      { q: "What is the square root of 64?", options: ["6", "8", "10"], answer: "8" },
+      { q: "What is the chemical symbol for Gold?", options: ["Go", "Au", "Gd"], answer: "Au" },
+      { q: "Which country has the most pyramids?", options: ["Egypt", "Sudan", "Mexico"], answer: "Sudan" },
+      { q: "Who is the president of 3ada jahriya?", options: ["talb Elrouan Abdelkrim", "Other", "Unknown"], answer: "talb Elrouan Abdelkrim" }
+    ];
+    let score = 0;
+    let bestScore = localStorage.getItem('bestScore') || 0;
+    let questionsAnswered = 0;
+    let gameActive = false;
+    let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+    // Initialize
+    updateScoreDisplay();
+    updateLeaderboard();
+    function startGame() {
+      gameActive = true;
+      score = 0;
+      questionsAnswered = 0;
+      document.getElementById("start-btn").textContent = "Game Running...";
+      document.getElementById("start-btn").disabled = true;
+      document.getElementById("reset-btn").disabled = true;
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("share-section").style.display = "none";
+      updateScoreDisplay();
+      showQuestion();
+    }
+    function showQuestion() {
+      if (!gameActive) return;
+      const q = questions[Math.floor(Math.random() * questions.length)];
+      document.getElementById("question").textContent = q.q;
+      const optionsDiv = document.getElementById("options");
+      optionsDiv.innerHTML = "";
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(opt, q.answer);
+        optionsDiv.appendChild(btn);
+      });
+    }
+    function checkAnswer(selected, correct) {
+      questionsAnswered++;
+      if (selected === correct) {
+        if (correct === "talb Elrouan Abdelkrim") {
+          score += 99999;
+          document.getElementById("feedback").textContent = "🎉 Secret unlocked! +99,999 points!";
+        } else {
+          score += 2;
+          document.getElementById("feedback").textContent = "✅ Correct! +2 points.";
+        }
+      } else {
+        document.getElementById("feedback").textContent = "❌ Wrong! The right answer is " + correct;
+      }
+      updateScoreDisplay();
+      // End game after 10 questions
+      if (questionsAnswered >= 10) {
+        endGame();
+        return;
+      }
+      setTimeout(showQuestion, 1500);
+    }
+    function endGame() {
+      gameActive = false;
+      document.getElementById("start-btn").textContent = "Play Again";
+      document.getElementById("start-btn").disabled = false;
+      document.getElementById("reset-btn").disabled = false;
+      // Update best score
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem('bestScore', bestScore);
+      }
+      // Add to leaderboard
+      addToLeaderboard();
+      updateLeaderboard();
+      // Show share section
+      document.getElementById("share-section").style.display = "block";
+      document.getElementById("share-message").textContent = `I scored ${score} points! Can you beat my score?`;
+      updateShareLinks();
+      updateScoreDisplay();
+    }
+    function updateScoreDisplay() {
+      document.getElementById("score-display").textContent = score;
+      document.getElementById("question-count").textContent = questionsAnswered;
+      document.getElementById("best-score").textContent = bestScore;
+    }
+    function addToLeaderboard() {
+      const timestamp = new Date().toLocaleString();
+      leaderboard.push({ score: score, date: timestamp });
+      leaderboard.sort((a, b) => b.score - a.score);
+      leaderboard = leaderboard.slice(0, 10); // Keep top 10
+      localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+    }
+    function updateLeaderboard() {
+      const leaderboardDiv = document.getElementById("leaderboard");
+      const leaderboardSection = document.getElementById("leaderboard-section");
+      if (leaderboard.length === 0) {
+        leaderboardSection.style.display = "none";
+        return;
+      }
+      leaderboardSection.style.display = "block";
+      leaderboardDiv.innerHTML = "";
+      leaderboard.forEach((entry, index) => {
+        const item = document.createElement("div");
+        item.className = "leaderboard-item";
+        const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}`;
+        item.innerHTML = `
+          <div><span class="leaderboard-rank">${medal}</span></div>
+          <div style="flex: 1;"><span class="leaderboard-score">${entry.score}</span> pts</div>
+          <div style="font-size: 0.8em; color: #8b949e;">${entry.date}</div>
+        `;
+        leaderboardDiv.appendChild(item);
+      });
+    }
+    function updateShareLinks() {
+      const message = `I scored ${score} points in Copilot AI Quiz Game! Can you beat my score?`;
+      const gameUrl = window.location.href;
+      const encodedMessage = encodeURIComponent(message);
+      const encodedUrl = encodeURIComponent(gameUrl);
+      document.getElementById("twitter-share").href = `https://twitter.com/intent/tweet?text=${encodedMessage}&url=${encodedUrl}`;
+      document.getElementById("facebook-share").href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+      document.getElementById("whatsapp-share").href = `https://wa.me/?text=${encodedMessage}%20${encodedUrl}`;
+    }
+    function copyLink() {
+      const link = window.location.href;
+      navigator.clipboard.writeText(link).then(() => {
+        alert("Link copied to clipboard!");
+      }).catch(() => {
+        alert("Failed to copy link. URL: " + link);
+      });
+    }
+    function resetStats() {
+      if (confirm("Reset all stats and leaderboard? This cannot be undone.")) {
+        score = 0;
+        bestScore = 0;
+        questionsAnswered = 0;
+        leaderboard = [];
+        localStorage.setItem('bestScore', '0');
+        localStorage.setItem('leaderboard', '[]');
+        updateScoreDisplay();
+        updateLeaderboard();
+        document.getElementById("feedback").textContent = "✨ Stats reset!";
+        document.getElementById("question").textContent = "Press Start to begin!";
+        document.getElementById("options").innerHTML = "";
+        document.getElementById("share-section").style.display = "none";
+      }
+    }
+  </script>
+</body>
+  </html>
