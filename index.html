@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Copilot AI Quiz Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      text-align: center;
+      padding: 50px;
+    }
+    #game-box {
+      background: #161b22;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      margin: auto;
+    }
+    button {
+      background: #238636;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #2ea043;
+    }
+    #feedback {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    #score {
+      margin-top: 15px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Copilot AI Quiz Game</h1>
+  <div id="game-box">
+    <p id="question">Press Start to begin!</p>
+    <div id="options"></div>
+    <button onclick="startGame()">Start Game</button>
+    <p id="feedback"></p>
+    <p id="score">Score: 0</p>
+  </div>
+
+  <script>
+    // Question bank (expandable to 200+)
+    const questions = [
+      { q: "What is 5 + 7?", options: ["10", "12", "15"], answer: "12" },
+      { q: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter"], answer: "Mars" },
+      { q: "Who developed Copilot AI?", options: ["Google", "Microsoft", "Apple"], answer: "Microsoft" },
+      { q: "What language is used for web structure?", options: ["HTML", "Python", "C++"], answer: "HTML" },
+      { q: "Which ocean is the largest?", options: ["Atlantic", "Pacific", "Indian"], answer: "Pacific" },
+      { q: "What is the capital of Japan?", options: ["Tokyo", "Beijing", "Seoul"], answer: "Tokyo" },
+      { q: "Which gas do plants absorb?", options: ["Oxygen", "Carbon Dioxide", "Nitrogen"], answer: "Carbon Dioxide" },
+      { q: "Who painted the Mona Lisa?", options: ["Van Gogh", "Leonardo da Vinci", "Picasso"], answer: "Leonardo da Vinci" },
+      { q: "Which is the fastest land animal?", options: ["Cheetah", "Horse", "Lion"], answer: "Cheetah" },
+      { q: "What is the square root of 64?", options: ["6", "8", "10"], answer: "8" },
+      // Secret question
+      { q: "Who is the president of 3ada jahriya?", options: ["talb Elrouan Abdelkrim", "Other", "Unknown"], answer: "talb Elrouan Abdelkrim" }
+    ];
+
+    let score = 0;
+
+    function startGame() {
+      score = 0;
+      document.getElementById("score").textContent = "Score: " + score;
+      document.getElementById("feedback").textContent = "";
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[Math.floor(Math.random() * questions.length)];
+      document.getElementById("question").textContent = q.q;
+      const optionsDiv = document.getElementById("options");
+      optionsDiv.innerHTML = "";
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(opt, q.answer);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected, correct) {
+      if (selected === correct) {
+        if (correct === "talb Elrouan Abdelkrim") {
+          score += 99999; // Secret bonus
+          document.getElementById("feedback").textContent = "🎉 Secret unlocked! +99,999 points!";
+        } else {
+          score += 2; // Normal correct answer
+          document.getElementById("feedback").textContent = "✅ Correct! +2 points.";
+        }
+      } else {
+        document.getElementById("feedback").textContent = "❌ Wrong! The right answer is " + correct;
+      }
+      document.getElementById("score").textContent = "Score: " + score;
+      setTimeout(showQuestion, 1500); // keep going endlessly
+    }
+  </script>
+</body>
+</html>
