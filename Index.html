@@ -1,468 +1,831 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Play the Copilot AI Quiz Game! Test your knowledge on science, history, and more. Challenge yourself and share your scores!">
-  <meta name="keywords" content="quiz, game, copilot, ai, trivia, educational">
-  <meta property="og:title" content="Copilot AI Quiz Game">
-  <meta property="og:description" content="Test your knowledge with our interactive quiz game!">
-  <meta property="og:type" content="website">
-  <title>Copilot AI Quiz Game - Test Your Knowledge!</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play a modern AI quiz game with multiple categories, a timer, streaks, and leaderboard." />
+  <title>Copilot AI Quiz Arena</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
+    :root {
+      --bg: #0b1120;
+      --bg2: #111827;
+      --panel: rgba(17, 24, 39, 0.92);
+      --panel-light: rgba(30, 41, 59, 0.9);
+      --primary: #60a5fa;
+      --primary-strong: #3b82f6;
+      --success: #22c55e;
+      --danger: #f87171;
+      --warning: #fbbf24;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --border: rgba(148, 163, 184, 0.25);
+      --shadow: rgba(15, 23, 42, 0.7);
+    }
+
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
     }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #1d4ed8 0%, #0b1120 25%, #020817 100%);
+      color: var(--text);
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
-      color: #e6edf3;
-      text-align: center;
-      padding: 20px;
       min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 24px;
     }
-    .header {
-      margin-bottom: 30px;
+
+    .app {
+      width: min(980px, 100%);
     }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(96, 165, 250, 0.12);
+      color: #dbeafe;
+      border: 1px solid rgba(96, 165, 250, 0.4);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
     h1 {
-      font-size: 2.5em;
-      margin-bottom: 10px;
-      background: linear-gradient(135deg, #58a6ff, #79c0ff);
+      margin: 0;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #dbeafe, #93c5fd 45%, #bfdbfe);
       -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
       background-clip: text;
+      color: transparent;
     }
-    .tagline {
-      font-size: 1.1em;
-      color: #8b949e;
-      margin-bottom: 20px;
+
+    .subtitle {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1.05rem;
     }
-    #game-box {
-      background: linear-gradient(135deg, #161b22, #0d1117);
-      padding: 40px;
-      border-radius: 15px;
-      max-width: 700px;
-      margin: auto;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-      border: 1px solid #30363d;
+
+    .screen {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 30px 80px var(--shadow);
+      padding: 24px;
     }
-    .stats-container {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-      gap: 15px;
+
+    .category-section {
+      margin-top: 10px;
     }
-    .stat-box {
-      background: #0d1117;
-      padding: 15px 25px;
-      border-radius: 10px;
-      border: 1px solid #30363d;
-      flex: 1;
-      min-width: 120px;
+
+    .section-title {
+      margin: 0 0 14px;
+      color: #dbeafe;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
-    .stat-label {
-      font-size: 0.9em;
-      color: #8b949e;
-      margin-bottom: 5px;
-    }
-    .stat-value {
-      font-size: 1.8em;
-      font-weight: bold;
-      color: #58a6ff;
-    }
-    #question {
-      font-size: 1.5em;
-      margin-bottom: 25px;
-      color: #e6edf3;
-      line-height: 1.4;
-    }
-    #options {
+
+    .category-grid {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 12px;
-      margin-bottom: 25px;
     }
-    button {
-      background: #238636;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      margin: 8px auto;
-      border-radius: 8px;
+
+    .category-btn {
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 14px 12px;
+      font-size: 1rem;
       cursor: pointer;
-      font-size: 1em;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      max-width: 300px;
+      transition: 0.2s ease;
+      text-align: center;
     }
-    button:hover {
-      background: #2ea043;
+
+    .category-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(46, 160, 67, 0.3);
+      border-color: rgba(96, 165, 250, 0.6);
+      box-shadow: 0 15px 30px rgba(59, 130, 246, 0.2);
     }
-    button:active {
-      transform: translateY(0);
+
+    .category-btn.active {
+      background: linear-gradient(135deg, rgba(59,130,246,0.32), rgba(96,165,250,0.12));
+      border-color: rgba(96, 165, 250, 0.8);
+      color: #eff6ff;
     }
-    .button-group {
+
+    .actions {
+      margin-top: 24px;
       display: flex;
-      gap: 10px;
-      justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-    .btn-secondary {
-      background: #1f6feb;
-    }
-    .btn-secondary:hover {
-      background: #388bfd;
-    }
-    .btn-danger {
-      background: #da3633;
-    }
-    .btn-danger:hover {
-      background: #f85149;
-    }
-    #feedback {
-      margin-top: 20px;
-      font-weight: bold;
-      font-size: 1.1em;
-      min-height: 30px;
-      animation: fadeIn 0.3s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    .leaderboard-section {
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #30363d;
-    }
-    .leaderboard-title {
-      font-size: 1.3em;
-      margin-bottom: 15px;
-      color: #58a6ff;
-    }
-    .leaderboard-item {
-      background: #0d1117;
-      padding: 10px 15px;
-      margin: 8px 0;
-      border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 1px solid #30363d;
-    }
-    .leaderboard-rank {
-      font-weight: bold;
-      color: #58a6ff;
-      min-width: 30px;
-    }
-    .leaderboard-score {
-      font-weight: bold;
-      color: #79c0ff;
-    }
-    .share-section {
-      margin-top: 25px;
-      padding: 20px;
-      background: #0d1117;
-      border-radius: 10px;
-      border: 1px solid #30363d;
-    }
-    .share-title {
-      font-size: 1.1em;
-      margin-bottom: 15px;
-      color: #58a6ff;
-    }
-    .share-buttons {
-      display: flex;
-      gap: 10px;
+      gap: 12px;
       justify-content: center;
-      flex-wrap: wrap;
     }
-    .share-btn {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2em;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      color: white;
-    }
-    .share-twitter {
-      background: #1da1f2;
-    }
-    .share-twitter:hover {
-      background: #1a91da;
-      transform: scale(1.1);
-    }
-    .share-facebook {
-      background: #1877f2;
-    }
-    .share-facebook:hover {
-      background: #0a66c2;
-      transform: scale(1.1);
-    }
-    .share-whatsapp {
-      background: #25d366;
-    }
-    .share-whatsapp:hover {
-      background: #1ebd5a;
-      transform: scale(1.1);
-    }
-    .copy-link {
-      background: #238636;
-      border: none;
-      color: white;
-      padding: 8px 15px;
-      border-radius: 5px;
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 700;
       cursor: pointer;
-      font-size: 0.9em;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
     }
-    .copy-link:hover {
-      background: #2ea043;
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
     }
-    .game-over {
-      background: #0d1117;
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-strong), var(--primary));
+      color: white;
+      box-shadow: 0 16px 28px rgba(59, 130, 246, 0.35);
+    }
+
+    .btn-secondary {
+      background: rgba(148, 163, 184, 0.12);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .status {
+      min-height: 28px;
+      margin-top: 18px;
+      text-align: center;
+      color: #bfdbfe;
+      font-weight: 600;
+    }
+
+    .game-panel {
+      margin-top: 26px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 24px 60px var(--shadow);
+      padding: 22px;
+      display: none;
+    }
+
+    .game-panel.visible {
+      display: block;
+    }
+
+    .game-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .stat {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      min-width: 120px;
+      padding: 12px 16px;
+      text-align: center;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: clamp(1.3rem, 2vw, 2rem);
+      font-weight: 800;
+      color: #e0f2fe;
+    }
+
+    .timer-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 74px;
+      padding: 12px 16px;
+      background: rgba(251, 191, 36, 0.14);
+      border: 1px solid rgba(251, 191, 36, 0.55);
+      border-radius: 999px;
+      color: #fef3c7;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .question-area {
+      margin-top: 22px;
+    }
+
+    .question-label {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #question {
+      margin: 0;
+      font-size: clamp(1.5rem, 2vw, 2.4rem);
+      line-height: 1.4;
+      color: #f8fafc;
+    }
+
+    #options {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .answer-btn {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8));
+      color: var(--text);
+      border: 1px solid var(--border);
+      text-align: left;
+      padding: 18px 16px;
+      border-radius: 14px;
+      font-size: 1.04rem;
+      font-weight: 600;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .answer-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(96, 165, 250, 0.12), transparent 40%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .answer-btn:hover:not(:disabled)::before {
+      opacity: 1;
+    }
+
+    .answer-btn.correct {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.29), rgba(15, 118, 110, 0.18));
+      border-color: rgba(34, 197, 94, 0.8);
+      color: #dcfce7;
+    }
+
+    .answer-btn.wrong {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(127, 29, 29, 0.18));
+      border-color: rgba(248, 113, 113, 0.8);
+      color: #fee2e2;
+    }
+
+    .answer-btn:disabled {
+      cursor: default;
+    }
+
+    #feedback {
+      min-height: 32px;
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #dbeafe;
+    }
+
+    .summary-card {
+      margin-top: 18px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 18px;
       padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
-      border: 1px solid #30363d;
+      display: none;
     }
-    .trophy {
-      font-size: 3em;
+
+    .summary-card.visible {
+      display: block;
+    }
+
+    .summary-title {
+      margin: 0 0 8px;
+      font-size: 1.7rem;
+      color: #f8fafc;
+    }
+
+    .summary-text {
       margin: 10px 0;
+      color: var(--muted);
+      font-size: 1.02rem;
     }
-    footer {
-      margin-top: 40px;
-      color: #8b949e;
-      font-size: 0.9em;
+
+    .leaderboard-box,
+    .share-box {
+      margin-top: 24px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.4);
+      padding: 20px;
     }
-    footer a {
-      color: #58a6ff;
+
+    .leaderboard-box h3,
+    .share-box h3 {
+      margin: 0 0 16px;
+      color: #dbeafe;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .leaderboard-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .leaderboard-item {
+      display: grid;
+      grid-template-columns: 70px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .rank {
+      font-weight: 800;
+      color: #93c5fd;
+      font-size: 1.1rem;
+    }
+
+    .score-value {
+      font-weight: 800;
+      color: #f8fafc;
+    }
+
+    .score-meta {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .share-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .share-btn {
+      width: 48px;
+      height: 48px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      border-radius: 50%;
       text-decoration: none;
+      font-size: 1.2rem;
     }
-    footer a:hover {
-      text-decoration: underline;
+
+    .share-twitter { background: #1d9bf0; }
+    .share-facebook { background: #1877f2; }
+    .share-whatsapp { background: #25d366; }
+
+    .copy-link {
+      background: linear-gradient(135deg, #10b981, #34d399);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 16px; }
+      .screen, .game-panel, .leaderboard-box, .share-box { padding: 18px; }
+      #options { grid-template-columns: 1fr; }
+      .leaderboard-item { grid-template-columns: 50px 1fr; }
+      .score-meta { grid-column: 2; }
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>🎮 Copilot AI Quiz Game</h1>
-    <p class="tagline">Test your knowledge and compete with friends!</p>
+  <div class="app">
+    <header class="hero">
+      <div class="hero-badge"><i class="fa-solid fa-brain"></i> Quiz Challenge</div>
+      <h1>Copilot AI Quiz Arena</h1>
+      <p class="subtitle">Sharpen your brain, beat the timer, and climb the leaderboard.</p>
+    </header>
+
+    <section class="screen" id="menu-screen">
+      <div class="category-section">
+        <h2 class="section-title">Choose a Category</h2>
+        <div class="category-grid" id="categoryGrid"></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" id="start-btn">Start Game</button>
+        <button class="btn-secondary" id="reset-btn">Reset Scores</button>
+      </div>
+
+      <div id="status" class="status"></div>
+    </section>
+
+    <main class="game-panel" id="game-panel">
+      <div class="game-top">
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">Score</div>
+            <div class="stat-value" id="score">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Correct</div>
+            <div class="stat-value" id="correct">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Best</div>
+            <div class="stat-value" id="best-score">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Streak</div>
+            <div class="stat-value" id="streak">0</div>
+          </div>
+        </div>
+
+        <div class="timer-pill" id="timer">15s</div>
+      </div>
+
+      <div class="question-area">
+        <div class="question-label">Question</div>
+        <h2 id="question">Select a category and start playing.</h2>
+        <div id="options"></div>
+        <div id="feedback"></div>
+      </div>
+
+      <div class="summary-card" id="summary-card">
+        <h3 class="summary-title">Game Over</h3>
+        <p class="summary-text" id="summary-text"></p>
+        <div class="actions">
+          <button class="btn-primary" id="play-again-btn">Play Again</button>
+          <button class="btn-secondary" id="return-menu-btn">Change Category</button>
+        </div>
+      </div>
+    </main>
+
+    <section class="leaderboard-box" id="leaderboard-box">
+      <h3>Top Scores</h3>
+      <div class="leaderboard-list" id="leaderboard"></div>
+    </section>
+
+    <section class="share-box" id="share-box">
+      <h3>Share Your Score</h3>
+      <p id="share-message" class="summary-text">Challenge your friends and see if they can beat your score.</p>
+      <div class="share-actions">
+        <a id="twitter-share" class="share-btn share-twitter" href="#" target="_blank" title="Share on Twitter"><i class="fab fa-twitter"></i></a>
+        <a id="facebook-share" class="share-btn share-facebook" href="#" target="_blank" title="Share on Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a id="whatsapp-share" class="share-btn share-whatsapp" href="#" target="_blank" title="Share on WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <button class="copy-link" id="copy-link-btn">Copy Link</button>
+      </div>
+    </section>
   </div>
-  <div id="game-box">
-    <div class="stats-container">
-      <div class="stat-box">
-        <div class="stat-label">Current Score</div>
-        <div class="stat-value" id="score-display">0</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Questions</div>
-        <div class="stat-value" id="question-count">0</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Best Score</div>
-        <div class="stat-value" id="best-score">0</div>
-      </div>
-    </div>
-    <p id="question">Press Start to begin!</p>
-    <div id="options"></div>
-    <div class="button-group">
-      <button onclick="startGame()" id="start-btn">Start Game</button>
-      <button class="btn-secondary" onclick="resetStats()" id="reset-btn">Reset Stats</button>
-    </div>
-    <p id="feedback"></p>
-    <!-- Leaderboard Section -->
-    <div class="leaderboard-section" id="leaderboard-section" style="display: none;">
-      <div class="leaderboard-title">🏆 Top Scores</div>
-      <div id="leaderboard"></div>
-    </div>
-    <!-- Share Section -->
-    <div class="share-section" id="share-section" style="display: none;">
-      <div class="share-title">📢 Share Your Score!</div>
-      <p id="share-message" style="margin-bottom: 15px;"></p>
-      <div class="share-buttons">
-        <a id="twitter-share" class="share-btn share-twitter" target="_blank" title="Share on Twitter">
-          <i class="fab fa-twitter"></i>
-        </a>
-        <a id="facebook-share" class="share-btn share-facebook" target="_blank" title="Share on Facebook">
-          <i class="fab fa-facebook-f"></i>
-        </a>
-        <a id="whatsapp-share" class="share-btn share-whatsapp" target="_blank" title="Share on WhatsApp">
-          <i class="fab fa-whatsapp"></i>
-        </a>
-        <button class="copy-link" onclick="copyLink()">📋 Copy Link</button>
-      </div>
-    </div>
-  </div>
-  <footer>
-    <p>Made with ❤️ | <a href="https://github.com/Xhack2011/Amjnan-game">View on GitHub</a></p>
-  </footer>
+
   <script>
-    // Question bank (expandable to 200+)
-    const questions = [
-      { q: "What is 5 + 7?", options: ["10", "12", "15"], answer: "12" },
-      { q: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter"], answer: "Mars" },
-      { q: "Who developed Copilot AI?", options: ["Google", "Microsoft", "Apple"], answer: "Microsoft" },
-      { q: "What language is used for web structure?", options: ["HTML", "Python", "C++"], answer: "HTML" },
-      { q: "Which ocean is the largest?", options: ["Atlantic", "Pacific", "Indian"], answer: "Pacific" },
-      { q: "What is the capital of Japan?", options: ["Tokyo", "Beijing", "Seoul"], answer: "Tokyo" },
-      { q: "Which gas do plants absorb?", options: ["Oxygen", "Carbon Dioxide", "Nitrogen"], answer: "Carbon Dioxide" },
-      { q: "Who painted the Mona Lisa?", options: ["Van Gogh", "Leonardo da Vinci", "Picasso"], answer: "Leonardo da Vinci" },
-      { q: "Which is the fastest land animal?", options: ["Cheetah", "Horse", "Lion"], answer: "Cheetah" },
-      { q: "What is the square root of 64?", options: ["6", "8", "10"], answer: "8" },
-      { q: "What is the chemical symbol for Gold?", options: ["Go", "Au", "Gd"], answer: "Au" },
-      { q: "Which country has the most pyramids?", options: ["Egypt", "Sudan", "Mexico"], answer: "Sudan" },
-      { q: "Who is the president of 3ada jahriya?", options: ["talb Elrouan Abdelkrim", "Other", "Unknown"], answer: "talb Elrouan Abdelkrim" }
-    ];
+    const questionBank = {
+      general: [
+        { q: "Which planet is known as the Red Planet?", options: ["Venus", "Mars", "Jupiter", "Mercury"], answer: "Mars" },
+        { q: "What is 12 × 8?", options: ["84", "96", "108", "92"], answer: "96" },
+        { q: "Which language is primarily used for styling web pages?", options: ["HTML", "CSS", "JavaScript", "SQL"], answer: "CSS" },
+        { q: "Who wrote 'Romeo and Juliet'?", options: ["Charles Dickens", "William Shakespeare", "Mark Twain", "Jane Austen"], answer: "William Shakespeare" },
+        { q: "Which ocean is the largest on Earth?", options: ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"], answer: "Pacific Ocean" },
+        { q: "What is the capital city of France?", options: ["Berlin", "Rome", "Paris", "Madrid"], answer: "Paris" },
+        { q: "Which gas do plants absorb from the atmosphere?", options: ["Oxygen", "Nitrogen", "Carbon dioxide", "Hydrogen"], answer: "Carbon dioxide" },
+        { q: "What is the largest mammal in the world?", options: ["Elephant", "Blue whale", "Giraffe", "Hippopotamus"], answer: "Blue whale" },
+        { q: "Which year did the first moon landing happen?", options: ["1965", "1969", "1972", "1959"], answer: "1969" },
+        { q: "What does HTML stand for?", options: ["HyperText Markup Language", "Home Tool Markup Language", "Hyperlink and Text Markup Language", "HighText Machine Language"], answer: "HyperText Markup Language" }
+      ],
+      science: [
+        { q: "What is the chemical symbol for gold?", options: ["Go", "Gd", "Au", "Ag"], answer: "Au" },
+        { q: "Which organ pumps blood through the human body?", options: ["Lungs", "Brain", "Heart", "Kidneys"], answer: "Heart" },
+        { q: "What is the boiling point of water at sea level?", options: ["90°C", "100°C", "110°C", "120°C"], answer: "100°C" },
+        { q: "Which planet is closest to the Sun?", options: ["Earth", "Mercury", "Venus", "Mars"], answer: "Mercury" },
+        { q: "What force keeps us on the ground?", options: ["Magnetism", "Gravity", "Friction", "Inertia"], answer: "Gravity" },
+        { q: "Which part of the cell contains genetic material?", options: ["Cell wall", "Nucleus", "Membrane", "Cytoplasm"], answer: "Nucleus" },
+        { q: "What is H₂O more commonly known as?", options: ["Oxygen", "Salt", "Water", "Carbon dioxide"], answer: "Water" },
+        { q: "Which scientist developed the theory of relativity?", options: ["Newton", "Einstein", "Galileo", "Tesla"], answer: "Einstein" }
+      ],
+      history: [
+        { q: "Who was the first president of the United States?", options: ["Thomas Jefferson", "George Washington", "Abraham Lincoln", "John Adams"], answer: "George Washington" },
+        { q: "Which ancient civilization built Machu Picchu?", options: ["Romans", "Maya", "Inca", "Greeks"], answer: "Inca" },
+        { q: "In which year did World War II end?", options: ["1943", "1945", "1948", "1939"], answer: "1945" },
+        { q: "Which empire was ruled by Julius Caesar?", options: ["Ottoman Empire", "Roman Empire", "British Empire", "Mongol Empire"], answer: "Roman Empire" },
+        { q: "The Great Wall of China was mainly built to protect against invasions from which direction?", options: ["South", "East", "North", "West"], answer: "North" },
+        { q: "Which city was the capital of the Byzantine Empire?", options: ["Alexandria", "Constantinople", "Athens", "Cairo"], answer: "Constantinople" }
+      ],
+      geography: [
+        { q: "Which country has the most natural lakes?", options: ["Canada", "Brazil", "Russia", "USA"], answer: "Canada" },
+        { q: "What is the longest river in the world?", options: ["Amazon", "Nile", "Yangtze", "Mississippi"], answer: "Amazon" },
+        { q: "Which desert is the largest hot desert on Earth?", options: ["Gobi", "Kalahari", "Sahara", "Arabian"], answer: "Sahara" },
+        { q: "Which city is known as the City of Love?", options: ["Rome", "Paris", "Venice", "Prague"], answer: "Paris" },
+        { q: "Which country has the most pyramids?", options: ["Mexico", "Egypt", "Sudan", "Greece"], answer: "Sudan" }
+      ],
+      tech: [
+        { q: "What does CPU stand for?", options: ["Central Processing Unit", "Computer Power Unit", "Central Program Utility", "Central Processing Utility"], answer: "Central Processing Unit" },
+        { q: "Which company created the iPhone?", options: ["Samsung", "Microsoft", "Apple", "Google"], answer: "Apple" },
+        { q: "What does URL stand for?", options: ["Uniform Resource Locator", "Universal Reference Link", "User Resource Link", "Unique Routing Locator"], answer: "Uniform Resource Locator" },
+        { q: "Which language is mainly used for web app interactivity?", options: ["Python", "JavaScript", "SQL", "Ruby"], answer: "JavaScript" },
+        { q: "What is the name of the wireless technology used for short-range connections?", options: ["Bluetooth", "Ethernet", "Wi-Fi", "NFC"], answer: "Bluetooth" }
+      ]
+    };
+
+    const categories = Object.keys(questionBank);
+    let selectedCategory = "general";
+    let totalQuestions = 8;
     let score = 0;
-    let bestScore = localStorage.getItem('bestScore') || 0;
-    let questionsAnswered = 0;
+    let correctAnswers = 0;
+    let streak = 0;
+    let questionIndex = 0;
+    let usedQuestions = [];
+    let timer = 15;
+    let timerHandle = null;
+    let bestScore = Number(localStorage.getItem("bestScore") || 0);
     let gameActive = false;
-    let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
-    // Initialize
-    updateScoreDisplay();
-    updateLeaderboard();
-    function startGame() {
-      gameActive = true;
-      score = 0;
-      questionsAnswered = 0;
-      document.getElementById("start-btn").textContent = "Game Running...";
-      document.getElementById("start-btn").disabled = true;
-      document.getElementById("reset-btn").disabled = true;
-      document.getElementById("feedback").textContent = "";
-      document.getElementById("share-section").style.display = "none";
-      updateScoreDisplay();
-      showQuestion();
+    let leaderboard = JSON.parse(localStorage.getItem("leaderboard") || "[]");
+
+    const categoryGrid = document.getElementById("categoryGrid");
+    const startBtn = document.getElementById("start-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const statusEl = document.getElementById("status");
+    const gamePanel = document.getElementById("game-panel");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const scoreEl = document.getElementById("score");
+    const correctEl = document.getElementById("correct");
+    const bestScoreEl = document.getElementById("best-score");
+    const streakEl = document.getElementById("streak");
+    const timerEl = document.getElementById("timer");
+    const summaryCard = document.getElementById("summary-card");
+    const summaryText = document.getElementById("summary-text");
+    const leaderboardEl = document.getElementById("leaderboard");
+    const shareMessage = document.getElementById("share-message");
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
     }
-    function showQuestion() {
-      if (!gameActive) return;
-      const q = questions[Math.floor(Math.random() * questions.length)];
-      document.getElementById("question").textContent = q.q;
-      const optionsDiv = document.getElementById("options");
-      optionsDiv.innerHTML = "";
-      q.options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.textContent = opt;
-        btn.onclick = () => checkAnswer(opt, q.answer);
-        optionsDiv.appendChild(btn);
+
+    function renderCategories() {
+      categoryGrid.innerHTML = "";
+      categories.forEach((category) => {
+        const button = document.createElement("button");
+        button.className = `category-btn ${category === selectedCategory ? "active" : ""}`;
+        button.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+        button.type = "button";
+        button.addEventListener("click", () => {
+          selectedCategory = category;
+          renderCategories();
+          statusEl.textContent = `${category.charAt(0).toUpperCase() + category.slice(1)} ready!`;
+        });
+        categoryGrid.appendChild(button);
       });
     }
-    function checkAnswer(selected, correct) {
-      questionsAnswered++;
-      if (selected === correct) {
-        if (correct === "talb Elrouan Abdelkrim") {
-          score += 99999;
-          document.getElementById("feedback").textContent = "🎉 Secret unlocked! +99,999 points!";
-        } else {
-          score += 2;
-          document.getElementById("feedback").textContent = "✅ Correct! +2 points.";
-        }
-      } else {
-        document.getElementById("feedback").textContent = "❌ Wrong! The right answer is " + correct;
-      }
-      updateScoreDisplay();
-      // End game after 10 questions
-      if (questionsAnswered >= 10) {
-        endGame();
-        return;
-      }
-      setTimeout(showQuestion, 1500);
+
+    function updateStats() {
+      scoreEl.textContent = score;
+      correctEl.textContent = correctAnswers;
+      bestScoreEl.textContent = bestScore;
+      streakEl.textContent = streak;
+      timerEl.textContent = `${timer}s`;
     }
-    function endGame() {
-      gameActive = false;
-      document.getElementById("start-btn").textContent = "Play Again";
-      document.getElementById("start-btn").disabled = false;
-      document.getElementById("reset-btn").disabled = false;
-      // Update best score
-      if (score > bestScore) {
-        bestScore = score;
-        localStorage.setItem('bestScore', bestScore);
-      }
-      // Add to leaderboard
-      addToLeaderboard();
-      updateLeaderboard();
-      // Show share section
-      document.getElementById("share-section").style.display = "block";
-      document.getElementById("share-message").textContent = `I scored ${score} points! Can you beat my score?`;
-      updateShareLinks();
-      updateScoreDisplay();
-    }
-    function updateScoreDisplay() {
-      document.getElementById("score-display").textContent = score;
-      document.getElementById("question-count").textContent = questionsAnswered;
-      document.getElementById("best-score").textContent = bestScore;
-    }
-    function addToLeaderboard() {
-      const timestamp = new Date().toLocaleString();
-      leaderboard.push({ score: score, date: timestamp });
-      leaderboard.sort((a, b) => b.score - a.score);
-      leaderboard = leaderboard.slice(0, 10); // Keep top 10
-      localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-    }
-    function updateLeaderboard() {
-      const leaderboardDiv = document.getElementById("leaderboard");
-      const leaderboardSection = document.getElementById("leaderboard-section");
+
+    function renderLeaderboard() {
+      leaderboardEl.innerHTML = "";
       if (leaderboard.length === 0) {
-        leaderboardSection.style.display = "none";
+        leaderboardEl.innerHTML = '<div class="leaderboard-item"><div class="rank">—</div><div class="score-value">No scores yet</div><div class="score-meta">Start playing</div></div>';
         return;
       }
-      leaderboardSection.style.display = "block";
-      leaderboardDiv.innerHTML = "";
+
       leaderboard.forEach((entry, index) => {
-        const item = document.createElement("div");
-        item.className = "leaderboard-item";
-        const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}`;
-        item.innerHTML = `
-          <div><span class="leaderboard-rank">${medal}</span></div>
-          <div style="flex: 1;"><span class="leaderboard-score">${entry.score}</span> pts</div>
-          <div style="font-size: 0.8em; color: #8b949e;">${entry.date}</div>
+        const row = document.createElement("div");
+        row.className = "leaderboard-item";
+        row.innerHTML = `
+          <div class="rank">${index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}`}</div>
+          <div class="score-value">${entry.score} pts</div>
+          <div class="score-meta">${entry.date}</div>
         `;
-        leaderboardDiv.appendChild(item);
+        leaderboardEl.appendChild(row);
       });
     }
+
     function updateShareLinks() {
-      const message = `I scored ${score} points in Copilot AI Quiz Game! Can you beat my score?`;
+      const message = `I scored ${score} points in Copilot AI Quiz Arena! Try to beat me.`;
       const gameUrl = window.location.href;
       const encodedMessage = encodeURIComponent(message);
       const encodedUrl = encodeURIComponent(gameUrl);
+
       document.getElementById("twitter-share").href = `https://twitter.com/intent/tweet?text=${encodedMessage}&url=${encodedUrl}`;
       document.getElementById("facebook-share").href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
       document.getElementById("whatsapp-share").href = `https://wa.me/?text=${encodedMessage}%20${encodedUrl}`;
+      shareMessage.textContent = `I scored ${score} points in ${selectedCategory.toUpperCase()} mode. Can you beat my score?`;
     }
-    function copyLink() {
-      const link = window.location.href;
-      navigator.clipboard.writeText(link).then(() => {
-        alert("Link copied to clipboard!");
-      }).catch(() => {
-        alert("Failed to copy link. URL: " + link);
-      });
+
+    function addToLeaderboard() {
+      const entry = {
+        score,
+        date: new Date().toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
+      };
+      leaderboard.push(entry);
+      leaderboard.sort((a, b) => b.score - a.score);
+      leaderboard = leaderboard.slice(0, 5);
+      localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+      renderLeaderboard();
     }
-    function resetStats() {
-      if (confirm("Reset all stats and leaderboard? This cannot be undone.")) {
-        score = 0;
-        bestScore = 0;
-        questionsAnswered = 0;
-        leaderboard = [];
-        localStorage.setItem('bestScore', '0');
-        localStorage.setItem('leaderboard', '[]');
-        updateScoreDisplay();
-        updateLeaderboard();
-        document.getElementById("feedback").textContent = "✨ Stats reset!";
-        document.getElementById("question").textContent = "Press Start to begin!";
-        document.getElementById("options").innerHTML = "";
-        document.getElementById("share-section").style.display = "none";
+
+    function startGame() {
+      gameActive = true;
+      score = 0;
+      correctAnswers = 0;
+      streak = 0;
+      questionIndex = 0;
+      usedQuestions = shuffle(questionBank[selectedCategory]).slice(0, totalQuestions);
+      summaryCard.classList.remove("visible");
+      feedbackEl.textContent = "";
+      statusEl.textContent = `Playing ${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} mode`;
+      gamePanel.classList.add("visible");
+      updateStats();
+      askNextQuestion();
+    }
+
+    function stopTimer() {
+      if (timerHandle) {
+        clearInterval(timerHandle);
+        timerHandle = null;
       }
     }
+
+    function askNextQuestion() {
+      if (!gameActive) return;
+      if (questionIndex >= usedQuestions.length) {
+        endGame();
+        return;
+      }
+
+      stopTimer();
+      const currentQuestion = usedQuestions[questionIndex];
+      questionEl.textContent = currentQuestion.q;
+      optionsEl.innerHTML = "";
+      feedbackEl.textContent = "";
+      timer = 15;
+      updateStats();
+
+      currentQuestion.options.forEach((option) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "answer-btn";
+        btn.textContent = option;
+        btn.addEventListener("click", () => handleAnswer(option, currentQuestion.answer, btn));
+        optionsEl.appendChild(btn);
+      });
+
+      timerHandle = setInterval(() => {
+        timer -= 1;
+        updateStats();
+        if (timer <= 0) {
+          stopTimer();
+          handleAnswer(null, currentQuestion.answer, null, true);
+        }
+      }, 1000);
+    }
+
+    function handleAnswer(selected, correctAnswer, btn, timedOut = false) {
+      if (!gameActive) return;
+      stopTimer();
+
+      const optionsButtons = [...document.querySelectorAll(".answer-btn")];
+      optionsButtons.forEach((optionBtn) => {
+        optionBtn.disabled = true;
+        if (optionBtn.textContent === correctAnswer) {
+          optionBtn.classList.add("correct");
+        } else if (btn && optionBtn === btn) {
+          optionBtn.classList.add("wrong");
+        }
+      });
+
+      if (selected === correctAnswer && !timedOut) {
+        score += 10 + streak * 2;
+        correctAnswers += 1;
+        streak += 1;
+        feedbackEl.textContent = "✅ Correct! Nice job.";
+      } else {
+        streak = 0;
+        if (timedOut) {
+          feedbackEl.textContent = `⏰ Time's up! The correct answer was: ${correctAnswer}`;
+        } else {
+          feedbackEl.textContent = `❌ Wrong! The correct answer was: ${correctAnswer}`;
+        }
+      }
+
+      updateStats();
+      questionIndex += 1;
+
+      setTimeout(() => {
+        askNextQuestion();
+      }, 1200);
+    }
+
+    function endGame() {
+      gameActive = false;
+      stopTimer();
+
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem("bestScore", String(bestScore));
+      }
+
+      addToLeaderboard();
+      updateStats();
+      updateShareLinks();
+
+      const accuracy = usedQuestions.length ? Math.round((correctAnswers / usedQuestions.length) * 100) : 0;
+      summaryText.innerHTML = `Final score: <strong>${score}</strong> points<br>Correct answers: <strong>${correctAnswers}</strong> / ${usedQuestions.length}<br>Accuracy: <strong>${accuracy}%</strong>`;
+      summaryCard.classList.add("visible");
+      statusEl.textContent = "Round complete!";
+    }
+
+    function resetStats() {
+      const wantsReset = confirm("Reset your best score and leaderboard?");
+      if (!wantsReset) return;
+
+      bestScore = 0;
+      leaderboard = [];
+      localStorage.setItem("bestScore", "0");
+      localStorage.setItem("leaderboard", JSON.stringify([]));
+      renderLeaderboard();
+      updateStats();
+      statusEl.textContent = "Scores reset.";
+    }
+
+    startBtn.addEventListener("click", startGame);
+    resetBtn.addEventListener("click", resetStats);
+    document.getElementById("play-again-btn").addEventListener("click", startGame);
+    document.getElementById("return-menu-btn").addEventListener("click", () => {
+      gamePanel.classList.remove("visible");
+      summaryCard.classList.remove("visible");
+      statusEl.textContent = `Selected category: ${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}`;
+    });
+    document.getElementById("copy-link-btn").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        alert("Game link copied to clipboard!");
+      } catch (error) {
+        alert("Copy failed. Please copy the page URL manually.");
+      }
+    });
+
+    renderCategories();
+    renderLeaderboard();
+    updateStats();
+    updateShareLinks();
+    statusEl.textContent = `Selected category: ${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}`;
   </script>
 </body>
-  </html>
+</html>
